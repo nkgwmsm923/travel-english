@@ -861,6 +861,7 @@
         let hideEnglishAlways = false;
         let speechRate = 1.0;
         let isDarkMode = false;
+        let availableVoices = [];
         
         // LocalStorage persisted
         let bookmarks = JSON.parse(localStorage.getItem("phrase_bookmarks") || "[]");
@@ -878,11 +879,21 @@
             applyCategoryFilter("ALL");
             lucide.createIcons();
             
-            // Warm up TTS engine
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.getVoices();
-            }
+            // Warm up & cache TTS voices
+            initVoices();
         });
+
+        function initVoices() {
+            if ('speechSynthesis' in window) {
+                const loadVoices = () => {
+                    availableVoices = window.speechSynthesis.getVoices();
+                };
+                loadVoices();
+                if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                    window.speechSynthesis.onvoiceschanged = loadVoices;
+                }
+            }
+        }
 
         function initTheme() {
             const savedTheme = localStorage.getItem("phrase_app_theme");
@@ -1062,11 +1073,49 @@
             utterance.lang = "en-US";
             utterance.rate = speechRate;
 
-            // Try selecting US/English voice if available
-            const voices = window.speechSynthesis.getVoices();
-            const englishVoice = voices.find(v => v.lang.startsWith("en"));
-            if (englishVoice) {
-                utterance.voice = englishVoice;
+            // Get cached voices or fetch fresh
+            const voices = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
+            
+            if (voices.length > 0) {
+                // 英語(en)のボイスのみ抽出
+                const englishVoices = voices.filter(v => v.lang.startsWith("en"));
+
+                if (englishVoices.length > 0) {
+                    // 高音質・ナチュラルな音声を優先するためのキーワードスコア評価
+                    // (Google製、Enhanced/Premium高精度モデル、Samantha, Daniel, Siriなどを高評価)
+                    const highQualityKeywords = [
+                        "google us english", "google", "enhanced", "premium", "natural", 
+                        "samantha", "siri", "karen", "daniel", "samantha (enhanced)", "ava"
+                    ];
+
+                    let bestVoice = null;
+                    let maxScore = -1;
+
+                    englishVoices.forEach(voice => {
+                        let score = 0;
+                        const vName = voice.name.toLowerCase();
+
+                        // 米国英語(en-US)をやや優遇
+                        if (voice.lang === "en-US") score += 2;
+
+                        // 高品質キーワードの一致チェック
+                        highQualityKeywords.forEach((kw, index) => {
+                            if (vName.includes(kw)) {
+                                // 配列の前にあるほど高ポイント
+                                score += (highQualityKeywords.length - index) * 5;
+                            }
+                        });
+
+                        if (score > maxScore) {
+                            maxScore = score;
+                            bestVoice = voice;
+                        }
+                    });
+
+                    if (bestVoice) {
+                        utterance.voice = bestVoice;
+                    }
+                }
             }
 
             window.speechSynthesis.speak(utterance);
