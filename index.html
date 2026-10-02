@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海外旅行 英会話マスター</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom card flip and smooth transition effects */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <header class="bg-indigo-600 dark:bg-slate-800 border-b dark:border-slate-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="plane-takeoff" class="w-7 h-7 text-yellow-300"></i>
+                <h1 class="text-xl font-bold tracking-wide">海外旅行 英会話マスター</h1>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <!-- Dark Mode Toggle Button -->
+                <button id="theme-toggle" onclick="toggleDarkMode()" class="p-2 rounded-lg bg-indigo-700/60 dark:bg-slate-700 hover:bg-indigo-700 dark:hover:bg-slate-600 text-white transition flex items-center justify-center" title="ダークモード切替">
+                    <i data-lucide="moon" id="theme-toggle-dark-icon" class="w-5 h-5"></i>
+                    <i data-lucide="sun" id="theme-toggle-light-icon" class="w-5 h-5 hidden"></i>
+                </button>
+
+                <nav class="flex items-center space-x-1 sm:space-x-2 bg-indigo-700/50 dark:bg-slate-900/50 p-1 rounded-xl text-sm">
+                    <button id="nav-card" onclick="switchTab('card')" class="px-3 py-1.5 rounded-lg flex items-center space-x-1 transition font-medium bg-white text-indigo-700 shadow-sm">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span>カード</span>
+                    </button>
+                    <button id="nav-quiz" onclick="switchTab('quiz')" class="px-3 py-1.5 rounded-lg flex items-center space-x-1 transition font-medium hover:bg-indigo-600/50">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                        <span>クイズ</span>
+                    </button>
+                    <button id="nav-list" onclick="switchTab('list')" class="px-3 py-1.5 rounded-lg flex items-center space-x-1 transition font-medium hover:bg-indigo-600/50">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                        <span>一覧検索</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-200">
+        <div class="max-w-5xl mx-auto px-4 py-2 flex items-center space-x-2 overflow-x-auto custom-scrollbar text-sm" id="category-bar">
+            <!-- Dynamic categories generated via JS -->
+        </div>
+    </section>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col items-center">
+
+        <!-- ==================== FLASHCARD VIEW ==================== -->
+        <section id="view-card" class="w-full max-w-2xl flex flex-col items-center space-y-5">
+            
+            <!-- Controls & Settings Header -->
+            <div class="w-full flex justify-between items-center text-sm text-slate-600 dark:text-slate-300 px-1">
+                <div class="flex items-center space-x-3">
+                    <label class="flex items-center cursor-pointer select-none space-x-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full shadow-sm">
+                        <input type="checkbox" id="toggle-hide-english" onchange="toggleHideEnglish()" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-300 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 relative"></div>
+                        <span class="font-medium text-xs sm:text-sm">日本語のみ優先表示</span>
+                    </label>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="card-counter">0 / 0</span>
+                    <button onclick="shufflePhrases()" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition" title="ランダムシャッフル">
+                        <i data-lucide="shuffle" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- The Flashcard -->
+            <div id="flashcard" onclick="flipCard()" class="w-full h-80 sm:h-96 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-6 sm:p-8 flex flex-col justify-between items-center text-center cursor-pointer transition-all duration-300 hover:shadow-xl relative select-none">
+                
+                <div class="w-full flex justify-between items-center">
+                    <span id="card-category" class="text-xs font-semibold px-3 py-1 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded-full border border-indigo-100 dark:border-indigo-800">
+                        カテゴリー
+                    </span>
+                    <button onclick="event.stopPropagation(); toggleBookmarkCurrent()" id="card-bookmark-btn" class="p-2 text-slate-400 dark:text-slate-500 hover:text-yellow-500 dark:hover:text-yellow-400 transition">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <!-- Phrase Display Area -->
+                <div class="flex-1 flex flex-col justify-center items-center my-4 space-y-4 w-full">
+                    <!-- Japanese Translation -->
+                    <div id="card-ja" class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 leading-relaxed px-2">
+                        日本語訳を表示中...
+                    </div>
+
+                    <!-- English Phrase (Revealed or Hidden) -->
+                    <div id="card-en-container" class="space-y-3 transition-all duration-300 w-full">
+                        <div id="card-en" class="text-lg sm:text-xl font-semibold text-indigo-600 dark:text-indigo-400 tracking-wide">
+                            Click / Tap to reveal English
+                        </div>
+                        <button id="card-audio-btn" onclick="event.stopPropagation(); playCurrentAudio()" class="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/70 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-medium transition border border-indigo-200 dark:border-indigo-800 shadow-sm">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            <span>音声を聞く</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                    <span id="flip-hint">カードをタップして英単語・音声を切替</span>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <div class="w-full flex items-center justify-between gap-3 pt-2">
+                <button onclick="prevCard()" class="flex-1 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition flex justify-center items-center space-x-1">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    <span>前へ</span>
+                </button>
+
+                <button onclick="markStatus('review')" class="px-4 py-3 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-xl font-medium hover:bg-rose-100 dark:hover:bg-rose-900/60 transition flex items-center space-x-1">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">もう一度</span>
+                </button>
+
+                <button onclick="markStatus('mastered')" class="px-4 py-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition flex items-center space-x-1">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">覚えた</span>
+                </button>
+
+                <button onclick="nextCard()" class="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 shadow-md transition flex justify-center items-center space-x-1">
+                    <span>次へ</span>
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Speed & Audio Options -->
+            <div class="flex items-center space-x-4 text-xs text-slate-500 dark:text-slate-400 pt-2">
+                <span>再生速度:</span>
+                <button onclick="setSpeed(1.0)" id="speed-10" class="px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium">標準 (1.0x)</button>
+                <button onclick="setSpeed(0.8)" id="speed-08" class="px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium">ゆっくり (0.8x)</button>
+                <button onclick="setSpeed(0.6)" id="speed-06" class="px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium">かなり遅め (0.6x)</button>
+            </div>
+
+        </section>
+
+
+        <!-- ==================== QUIZ VIEW ==================== -->
+        <section id="view-quiz" class="w-full max-w-2xl flex flex-col items-center space-y-6 hidden">
+            
+            <div class="w-full bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg space-y-6">
+                <div class="flex justify-between items-center text-sm font-semibold text-slate-500 dark:text-slate-400">
+                    <span id="quiz-category">カテゴリー</span>
+                    <span id="quiz-score" class="text-indigo-600 dark:text-indigo-400">Score: 0 / 0</span>
+                </div>
+
+                <div class="text-center space-y-2">
+                    <span class="text-xs text-indigo-500 dark:text-indigo-400 font-bold uppercase tracking-wider">問題 (日本語訳に合う英語を選ぼう)</span>
+                    <h2 id="quiz-question-ja" class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">
+                        日本語問題文がここに入ります
+                    </h2>
+                </div>
+
+                <!-- 4 Options -->
+                <div id="quiz-options" class="grid grid-cols-1 gap-3">
+                    <!-- Option buttons dynamically generated -->
+                </div>
+
+                <div id="quiz-feedback" class="hidden p-4 rounded-xl text-center font-bold text-sm transition">
+                    <!-- Feedback result -->
+                </div>
+
+                <div class="flex justify-end">
+                    <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition flex items-center space-x-2">
+                        <span>次の問題</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ==================== LIST / SEARCH VIEW ==================== -->
+        <section id="view-list" class="w-full flex flex-col space-y-4 hidden">
+            
+            <!-- Search Filter Bar -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div class="relative w-full sm:w-96">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500"></i>
+                    <input type="text" id="search-input" oninput="renderList()" placeholder="英語・日本語・キーワード検索..." class="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="flex items-center space-x-2 text-xs text-slate-600 dark:text-slate-400 w-full sm:w-auto justify-end">
+                    <span id="list-count" class="font-medium">全 0 件</span>
+                </div>
+            </div>
+
+            <!-- Phrase List Container -->
+            <div id="phrase-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Dynamically populated list items -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto py-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-200">
+        <p>海外旅行 英会話フレーズ 学習アプリ &copy; 2026</p>
+    </footer>
+
+    <script>
+        /* Comprehensive 580 Phrase Database matching YouTube video content */
+        const MASTER_PHRASES = [
+            // ==================== 1. 入国審査 (Immigration: 1~71) ====================
+            { id: 1, cat: "Immigration", en: "Is this the line for immigration?", ja: "ここは入国審査の列ですか？" },
+            { id: 2, cat: "Immigration", en: "May I see your passport?", ja: "パスポートを見せていただけますか？" },
+            { id: 3, cat: "Immigration", en: "Can I see your passport please?", ja: "パスポートを見せていただけますか？" },
+            { id: 4, cat: "Immigration", en: "May I see your passport and your immigration card?", ja: "パスポートと入国カードを見せていただけますか？" },
+            { id: 5, cat: "Immigration", en: "Here you are.", ja: "はい、どうぞ。" },
+            { id: 6, cat: "Immigration", en: "Put your right thumb on the screen.", ja: "右手の親指を画面に乗せてください。" },
+            { id: 7, cat: "Immigration", en: "Now put the other four fingers on the screen.", ja: "次に残りの指4本を画面に乗せてください。" },
+            { id: 8, cat: "Immigration", en: "Put your left thumb on the screen.", ja: "左手の親指を画面に乗せてください。" },
+            { id: 9, cat: "Immigration", en: "Now put the other four fingers on the screen.", ja: "次に残りの指4本を画面に乗せてください。" },
+            { id: 10, cat: "Immigration", en: "Take off your hat please.", ja: "帽子を取ってください。" },
+            { id: 11, cat: "Immigration", en: "Take off your glasses please.", ja: "眼鏡を外してください。" },
+            { id: 12, cat: "Immigration", en: "Look at the camera please.", ja: "カメラを見てください。" },
+            { id: 13, cat: "Immigration", en: "Where are you coming from today?", ja: "今日はどちらから来ましたか？" },
+            { id: 14, cat: "Immigration", en: "I'm coming from Tokyo, Japan.", ja: "日本の東京から来ました。" },
+            { id: 15, cat: "Immigration", en: "What's the purpose of your visit?", ja: "訪問の目的は何ですか？" },
+            { id: 16, cat: "Immigration", en: "What brings you to this country?", ja: "どのような目的でこの国にお越しですか？" },
+            { id: 17, cat: "Immigration", en: "Are you here for business or sightseeing?", ja: "仕事ですか、それとも観光ですか？" },
+            { id: 18, cat: "Immigration", en: "I'm here for business.", ja: "仕事で来ました。" },
+            { id: 19, cat: "Immigration", en: "I'm here for sightseeing.", ja: "観光で来ました。" },
+            { id: 20, cat: "Immigration", en: "Is this the first trip to this country?", ja: "この国への旅行は初めてですか？" },
+            { id: 21, cat: "Immigration", en: "How many times have you visited this country?", ja: "この国には何回来たことがありますか？" },
+            { id: 22, cat: "Immigration", en: "Is this your first time to visit our country?", ja: "当国への訪問は初めてですか？" },
+            { id: 23, cat: "Immigration", en: "Have you ever been to Canada?", ja: "カナダに行ったことはありますか？" },
+            { id: 24, cat: "Immigration", en: "This is my first visit to Canada.", ja: "カナダに来るのはこれが初めてです。" },
+            { id: 25, cat: "Immigration", en: "I've been here twice.", ja: "ここに来るのは2回目です。" },
+            { id: 26, cat: "Immigration", en: "It's my third time.", ja: "3回目です。" },
+            { id: 27, cat: "Immigration", en: "I have been here a couple of times.", ja: "ここには数回来たことがあります。" },
+            { id: 28, cat: "Immigration", en: "How long will you be in the country?", ja: "この国にはどれくらい滞在しますか？" },
+            { id: 29, cat: "Immigration", en: "How long will you be staying here?", ja: "滞在期間はどれくらいですか？" },
+            { id: 30, cat: "Immigration", en: "How long will you stay here?", ja: "どれくらい滞在予定ですか？" },
+            { id: 31, cat: "Immigration", en: "How long do you plan to stay here?", ja: "どれくらい滞在する計画ですか？" },
+            { id: 32, cat: "Immigration", en: "How many days will you stay here?", ja: "何日間滞在しますか？" },
+            { id: 33, cat: "Immigration", en: "3 days / 1 week / 1 month", ja: "3日間 / 1週間 / 1ヶ月です。" },
+            { id: 34, cat: "Immigration", en: "I plan to stay here for a week.", ja: "1週間滞在する予定です。" },
+            { id: 35, cat: "Immigration", en: "I'll stay here for a week.", ja: "1週間滞在します。" },
+            { id: 36, cat: "Immigration", en: "I'll be here for a week.", ja: "1週間ここに滞在します。" },
+            { id: 37, cat: "Immigration", en: "I'll be staying for 5 days.", ja: "5日間滞在する予定です。" },
+            { id: 38, cat: "Immigration", en: "Where are you staying?", ja: "どちらに滞在されますか？" },
+            { id: 39, cat: "Immigration", en: "Where will you stay?", ja: "どこに滞在しますか？" },
+            { id: 40, cat: "Immigration", en: "Which hotel are you planning to stay at?", ja: "どのホテルに滞在する予定ですか？" },
+            { id: 41, cat: "Immigration", en: "Have you booked any accommodation?", ja: "宿泊先は予約していますか？" },
+            { id: 42, cat: "Immigration", en: "Which hotel did you book?", ja: "どのホテルを予約しましたか？" },
+            { id: 43, cat: "Immigration", en: "At the Grand Hotel.", ja: "グランドホテルです。" },
+            { id: 44, cat: "Immigration", en: "I'm going to stay at the Hyatt Hotel.", ja: "ハイアットホテルに滞在する予定です。" },
+            { id: 45, cat: "Immigration", en: "I'll stay at the Hilton Hotel.", ja: "ヒルトンホテルに滞在します。" },
+            { id: 46, cat: "Immigration", en: "I'll be staying at the Hilton Hotel.", ja: "ヒルトンホテルに滞在する予定です。" },
+            { id: 47, cat: "Immigration", en: "When will you return to your country?", ja: "いつ帰国しますか？" },
+            { id: 48, cat: "Immigration", en: "What is your intended date of return?", ja: "帰国予定日はいつですか？" },
+            { id: 49, cat: "Immigration", en: "When will you leave this country?", ja: "いつこの国を出発しますか？" },
+            { id: 50, cat: "Immigration", en: "I'm leaving here in a week.", ja: "1週間後にここを出発します。" },
+            { id: 51, cat: "Immigration", en: "I'm leaving here in 3 days.", ja: "3日後にここを出発します。" },
+            { id: 52, cat: "Immigration", en: "How much cash are you bringing into this country?", ja: "この国に現金はいくら持ち込んでいますか？" },
+            { id: 53, cat: "Immigration", en: "I have about $800.", ja: "約800ドル持っています。" },
+            { id: 54, cat: "Immigration", en: "What do you do?", ja: "ご職業は何ですか？" },
+            { id: 55, cat: "Immigration", en: "What's your occupation?", ja: "お仕事は何ですか？" },
+            { id: 56, cat: "Immigration", en: "I'm an office worker.", ja: "会社員です。" },
+            { id: 57, cat: "Immigration", en: "I'm a student.", ja: "学生です。" },
+            { id: 58, cat: "Immigration", en: "I'm a housewife.", ja: "主婦です。" },
+            { id: 59, cat: "Immigration", en: "I'm a government employee.", ja: "公務員です。" },
+            { id: 60, cat: "Immigration", en: "What's the name of the company?", ja: "会社の名前は何ですか？" },
+            { id: 61, cat: "Immigration", en: "Are you traveling alone?", ja: "一人旅ですか？" },
+            { id: 62, cat: "Immigration", en: "Are you traveling by yourself?", ja: "一人で旅行していますか？" },
+            { id: 63, cat: "Immigration", en: "I'm traveling alone.", ja: "一人旅です。" },
+            { id: 64, cat: "Immigration", en: "Yes, I'm traveling by myself.", ja: "はい、一人で旅行しています。" },
+            { id: 65, cat: "Immigration", en: "Are you traveling with family or friends?", ja: "ご家族やお友達と旅行ですか？" },
+            { id: 66, cat: "Immigration", en: "I'm traveling with my friends.", ja: "友達と旅行しています。" },
+            { id: 67, cat: "Immigration", en: "Are you traveling with your family?", ja: "ご家族と旅行ですか？" },
+            { id: 68, cat: "Immigration", en: "I'm traveling with my family.", ja: "家族と一緒に旅行しています。" },
+            { id: 69, cat: "Immigration", en: "I'll return your passport.", ja: "パスポートをお返しします。" },
+            { id: 70, cat: "Immigration", en: "Go ahead.", ja: "お進みください。" },
+            { id: 71, cat: "Immigration", en: "You may go.", ja: "お通りいただいて結構です。" },
+
+            // ==================== 2. 空港・チェックイン (Airport: 72~136) ====================
+            { id: 72, cat: "Airport", en: "Where is the check-in area?", ja: "チェックインエリアはどこですか？" },
+            { id: 73, cat: "Airport", en: "Where is the check-in counter?", ja: "チェックインカウンターはどこですか？" },
+            { id: 74, cat: "Airport", en: "Check in please.", ja: "チェックインをお願いします。" },
+            { id: 75, cat: "Airport", en: "I'd like to check in please.", ja: "チェックインをお願いしたいのですが。" },
+            { id: 76, cat: "Airport", en: "May I have your passport please?", ja: "パスポートを拝見できますか？" },
+            { id: 77, cat: "Airport", en: "May I see your passport please?", ja: "パスポートを見せていただけますか？" },
+            { id: 78, cat: "Airport", en: "Where are you flying today?", ja: "本日はどちらまでご出発ですか？" },
+            { id: 79, cat: "Airport", en: "Where is your final destination?", ja: "最終目的地はどこですか？" },
+            { id: 80, cat: "Airport", en: "My final destination is Tokyo, Japan.", ja: "最終目的地は日本の東京です。" },
+            { id: 81, cat: "Airport", en: "Do you have any baggage to check in?", ja: "預ける手荷物はありますか？" },
+            { id: 82, cat: "Airport", en: "How many bags do you have to check in?", ja: "預けるバッグは何個ありますか？" },
+            { id: 83, cat: "Airport", en: "Are you checking any bags?", ja: "お荷物は預けますか？" },
+            { id: 84, cat: "Airport", en: "How many pieces of luggage do you have?", ja: "手荷物は何点お持ちですか？" },
+            { id: 85, cat: "Airport", en: "I don't have any luggage to check in.", ja: "預ける荷物はありません。" },
+            { id: 86, cat: "Airport", en: "I have no checked baggage.", ja: "預け荷物はありません。" },
+            { id: 87, cat: "Airport", en: "I have nothing to check in.", ja: "預けるものは何もありません。" },
+            { id: 88, cat: "Airport", en: "I have two pieces of baggage to check in.", ja: "預ける荷物が2個あります。" },
+            { id: 89, cat: "Airport", en: "Just one.", ja: "一つだけです。" },
+            { id: 90, cat: "Airport", en: "Is there anything fragile in your luggage?", ja: "荷物の中に壊れものはありますか？" },
+            { id: 91, cat: "Airport", en: "Do you have anything fragile or flammable in your luggage?", ja: "荷物の中に壊れ物や危険物はありますか？" },
+            { id: 92, cat: "Airport", en: "Could you place your bag on the scale?", ja: "バッグをはかりに乗せていただけますか？" },
+            { id: 93, cat: "Airport", en: "Please place your bag on the scale.", ja: "バッグをはかりの上に乗せてください。" },
+            { id: 94, cat: "Airport", en: "Please put on the scale.", ja: "はかりに乗せてください。" },
+            { id: 95, cat: "Airport", en: "Could you put them on the scale please?", ja: "それらをはかりに乗せていただけますか？" },
+            { id: 96, cat: "Airport", en: "Your bag is overweight.", ja: "荷物の重量が超過しています。" },
+            { id: 97, cat: "Airport", en: "Do you have any carry-on baggage?", ja: "機内持ち込み手荷物はありますか？" },
+            { id: 98, cat: "Airport", en: "Can I take this on the plane?", ja: "これを飛行機内に持ち込めますか？" },
+            { id: 99, cat: "Airport", en: "Can I carry on this bag?", ja: "このバッグを持ち込めますか？" },
+            { id: 100, cat: "Airport", en: "Can I carry this on board?", ja: "これを機内に持っていけますか？" },
+            { id: 101, cat: "Airport", en: "Can I bring this luggage on board?", ja: "この荷物を機内に持ち込めますか？" },
+            { id: 102, cat: "Airport", en: "Do you want to sit in a window seat or an aisle seat?", ja: "窓側と通路側どちらの席がいいですか？" },
+            { id: 103, cat: "Airport", en: "Would you like an aisle or window seat?", ja: "通路側と窓側のどちらの席がよろしいですか？" },
+            { id: 104, cat: "Airport", en: "Do you have a seating preference?", ja: "座席のご希望はありますか？" },
+            { id: 105, cat: "Airport", en: "I'd like a seat towards the front.", ja: "前方の席をお願いします。" },
+            { id: 106, cat: "Airport", en: "Do you have a window seat?", ja: "窓側の席は空いていますか？" },
+            { id: 107, cat: "Airport", en: "Can I get a window seat please?", ja: "窓側の席をもらえますか？" },
+            { id: 108, cat: "Airport", en: "I'd like a window seat please.", ja: "窓側の席をお願いします。" },
+            { id: 109, cat: "Airport", en: "Do you have an aisle seat?", ja: "通路側の席はありますか？" },
+            { id: 110, cat: "Airport", en: "Can I get an aisle seat please?", ja: "通路側の席をいただけますか？" },
+            { id: 111, cat: "Airport", en: "I'd like an aisle seat please.", ja: "通路側の席をお願いします。" },
+            { id: 112, cat: "Airport", en: "Here is your boarding pass.", ja: "こちらが搭乗券です。" },
+            { id: 113, cat: "Airport", en: "May I change the seat?", ja: "席を変更してもいいですか？" },
+            { id: 114, cat: "Airport", en: "I'd like to sit with my friends.", ja: "友達と一緒に座りたいのですが。" },
+            { id: 115, cat: "Airport", en: "I'd like to change my flight.", ja: "フライトを変更したいです。" },
+            { id: 116, cat: "Airport", en: "Is the flight on time?", ja: "飛行機は定刻通りですか？" },
+            { id: 117, cat: "Airport", en: "The flight is on time.", ja: "フライトは定刻通りです。" },
+            { id: 118, cat: "Airport", en: "Will the flight be arriving on time?", ja: "フライトは定刻に到着しますか？" },
+            { id: 119, cat: "Airport", en: "Are we going to arrive on schedule?", ja: "予定通り到着しますか？" },
+            { id: 120, cat: "Airport", en: "What time will we arrive?", ja: "何時に到着しますか？" },
+            { id: 121, cat: "Airport", en: "What time will the plane arrive?", ja: "飛行機は何時に到着しますか？" },
+            { id: 122, cat: "Airport", en: "Which gate should I go to?", ja: "どのゲートに行けばいいですか？" },
+            { id: 123, cat: "Airport", en: "What's the gate number?", ja: "ゲート番号は何番ですか？" },
+            { id: 124, cat: "Airport", en: "Where is the boarding gate 9?", ja: "9番搭乗ゲートはどこですか？" },
+            { id: 125, cat: "Airport", en: "Where is the boarding gate?", ja: "搭乗ゲートはどこですか？" },
+            { id: 126, cat: "Airport", en: "Boarding gate is nine.", ja: "搭乗ゲートは9番です。" },
+            { id: 127, cat: "Airport", en: "Where is the boarding gate for ANA 781?", ja: "ANA 781便の搭乗ゲートはどこですか？" },
+            { id: 128, cat: "Airport", en: "Let me check your flight number.", ja: "便名を確認いたします。" },
+            { id: 129, cat: "Airport", en: "There's a 20 minute delay.", ja: "20分遅延しています。" },
+            { id: 130, cat: "Airport", en: "What time does the boarding gate open?", ja: "搭乗ゲートは何時に開きますか？" },
+            { id: 131, cat: "Airport", en: "What time will you start boarding?", ja: "搭乗開始は何時ですか？" },
+            { id: 132, cat: "Airport", en: "What time does boarding start?", ja: "搭乗開始は何時ですか？" },
+            { id: 133, cat: "Airport", en: "What's the boarding time?", ja: "搭乗時間は何時ですか？" },
+            { id: 134, cat: "Airport", en: "Boarding will begin at 2 p.m.", ja: "搭乗は午後2時に開始します。" },
+            { id: 135, cat: "Airport", en: "I got it, thank you.", ja: "分かりました、ありがとうございます。" },
+            { id: 136, cat: "Airport", en: "Enjoy your flight.", ja: "良い空の旅を。" },
+
+            // ==================== 3. 機内 (In-flight: 137~208) ====================
+            { id: 137, cat: "In-flight", en: "I can't find my seat.", ja: "自分の席が見つかりません。" },
+            { id: 138, cat: "In-flight", en: "What is your seat number?", ja: "お座席の番号は何番ですか？" },
+            { id: 139, cat: "In-flight", en: "My seat number is 36A.", ja: "私の席番号は36Aです。" },
+            { id: 140, cat: "In-flight", en: "Someone is sitting in my seat.", ja: "誰かが私の席に座っています。" },
+            { id: 141, cat: "In-flight", en: "Excuse me, I think this is my seat.", ja: "すみません、ここは私の席だと思います。" },
+            { id: 142, cat: "In-flight", en: "May I move to a different seat?", ja: "別の席に移動してもいいですか？" },
+            { id: 143, cat: "In-flight", en: "Would you mind changing seats with me?", ja: "席を替わっていただけませんか？" },
+            { id: 144, cat: "In-flight", en: "I'd like to change my seat please.", ja: "席を変更したいのですが。" },
+            { id: 145, cat: "In-flight", en: "Can I change my seat please?", ja: "席を替えてもらえますか？" },
+            { id: 146, cat: "In-flight", en: "Could you put my luggage on the shelf?", ja: "棚に荷物を載せてもらえますか？" },
+            { id: 147, cat: "In-flight", en: "Could you help me with this?", ja: "これをお手伝いいただけますか？" },
+            { id: 148, cat: "In-flight", en: "Could you help me with my bag?", ja: "荷物を手伝っていただけますか？" },
+            { id: 149, cat: "In-flight", en: "Could you help me put my bag up?", ja: "バッグを上に載せるのを手伝っていただけますか？" },
+            { id: 150, cat: "In-flight", en: "May I put my carry on baggage here?", ja: "ここに手荷物を置いてもいいですか？" },
+            { id: 151, cat: "In-flight", en: "May I take your coat?", ja: "上着をお預かりしましょうか？" },
+            { id: 152, cat: "In-flight", en: "Could you please take my coat?", ja: "上着を預かっていただけますか？" },
+            { id: 153, cat: "In-flight", en: "Do you have any sports magazine?", ja: "スポーツ雑誌はありますか？" },
+            { id: 154, cat: "In-flight", en: "Is there anyone who can speak Japanese?", ja: "日本語を話せる方はいますか？" },
+            { id: 155, cat: "In-flight", en: "Is there an attendant who speaks Japanese?", ja: "日本語を話す乗務員はいますか？" },
+            { id: 156, cat: "In-flight", en: "Are there any Japanese flight attendants on board?", ja: "日本人フライトアテンダントは乗っていますか？" },
+            { id: 157, cat: "In-flight", en: "Are we going to take off as scheduled?", ja: "予定通り離陸しますか？" },
+            { id: 158, cat: "In-flight", en: "We'll take off soon.", ja: "間もなく離陸します。" },
+            { id: 159, cat: "In-flight", en: "About how long is the flight?", ja: "飛行時間はどれくらいですか？" },
+            { id: 160, cat: "In-flight", en: "Would you like something to drink?", ja: "何かお飲み物はいかがですか？" },
+            { id: 161, cat: "In-flight", en: "What would you like to drink?", ja: "何をお飲みになりたいですか？" },
+            { id: 162, cat: "In-flight", en: "What kinds of drinks do you have?", ja: "どんな飲み物がありますか？" },
+            { id: 163, cat: "In-flight", en: "What drinks do you have?", ja: "どのような飲み物がありますか？" },
+            { id: 164, cat: "In-flight", en: "Can I see the menu please?", ja: "メニューを見せていただけますか？" },
+            { id: 165, cat: "In-flight", en: "I'd like a grapefruit juice please.", ja: "グレープフルーツジュースをお願いします。" },
+            { id: 166, cat: "In-flight", en: "Can I have some orange juice please?", ja: "オレンジジュースをいただけますか？" },
+            { id: 167, cat: "In-flight", en: "Do you have oolong tea?", ja: "烏龍茶はありますか？" },
+            { id: 168, cat: "In-flight", en: "Would you like some coffee or tea after the meal?", ja: "食後にコーヒーか紅茶はいかがですか？" },
+            { id: 169, cat: "In-flight", en: "I'd like a coffee please.", ja: "コーヒーをお願いします。" },
+            { id: 170, cat: "In-flight", en: "Can I have coffee please?", ja: "コーヒーをいただけますか？" },
+            { id: 171, cat: "In-flight", en: "Would you like milk and sugar?", ja: "ミルクと砂糖はお使いですか？" },
+            { id: 172, cat: "In-flight", en: "Do you need milk and sugar?", ja: "ミルクと砂糖は必要ですか？" },
+            { id: 173, cat: "In-flight", en: "Just sugar please.", ja: "砂糖だけでお願いします。" },
+            { id: 174, cat: "In-flight", en: "Both please.", ja: "両方お願いします。" },
+            { id: 175, cat: "In-flight", en: "Can I have some water please?", ja: "お水をいただけますか？" },
+            { id: 176, cat: "In-flight", en: "I'd like to have a beer.", ja: "ビールが飲みたいです。" },
+            { id: 177, cat: "In-flight", en: "Can I have a beer please?", ja: "ビールをいただけますか？" },
+            { id: 178, cat: "In-flight", en: "What kind of beers do you have?", ja: "どんな種類のビールがありますか？" },
+            { id: 179, cat: "In-flight", en: "I'd like a beer please.", ja: "ビールをお願いします。" },
+            { id: 180, cat: "In-flight", en: "Is alcohol free?", ja: "アルコールは無料ですか？" },
+            { id: 181, cat: "In-flight", en: "Can I have a snack please?", ja: "軽食をいただけますか？" },
+            { id: 182, cat: "In-flight", en: "May I have my meal later?", ja: "食事を後からいただくことはできますか？" },
+            { id: 183, cat: "In-flight", en: "Which would you like, beef or fish?", ja: "ビーフとフィッシュ、どちらになさいますか？" },
+            { id: 184, cat: "In-flight", en: "I'd like beef please.", ja: "ビーフをお願いします。" },
+            { id: 185, cat: "In-flight", en: "Would you like chicken or fish?", ja: "チキンとフィッシュ、どちらが良いですか？" },
+            { id: 186, cat: "In-flight", en: "I'd like chicken please.", ja: "チキンをお願いします。" },
+            { id: 187, cat: "In-flight", en: "Can I have cutlery please?", ja: "カトラリーをいただけますか？" },
+            { id: 188, cat: "In-flight", en: "Are you finished?", ja: "お済みですか？" },
+            { id: 189, cat: "In-flight", en: "Have you finished your meal?", ja: "お食事はお済みですか？" },
+            { id: 190, cat: "In-flight", en: "Yes, I'm done.", ja: "はい、食べ終わりました。" },
+            { id: 191, cat: "In-flight", en: "No, I'm still eating.", ja: "いいえ、まだ食べています。" },
+            { id: 192, cat: "In-flight", en: "May I take your tray away?", ja: "トレイをお下げしてもよろしいですか？" },
+            { id: 193, cat: "In-flight", en: "May I take this away?", ja: "これをお下げしてもよろしいですか？" },
+            { id: 194, cat: "In-flight", en: "Could you take this away please?", ja: "これをお下げいただけますか？" },
+            { id: 195, cat: "In-flight", en: "Could you take my tray away please?", ja: "トレイをお下げいただけますか？" },
+            { id: 196, cat: "In-flight", en: "Excuse me, where is the lavatory?", ja: "すみません、お手洗いはどこですか？" },
+            { id: 197, cat: "In-flight", en: "What is the temperature in Vancouver now?", ja: "バンクーバーの現在の気温は何度ですか？" },
+            { id: 198, cat: "In-flight", en: "Excuse me, may I get through?", ja: "すみません、通していただけますか？" },
+            { id: 199, cat: "In-flight", en: "Excuse me, may I recline my seat please?", ja: "すみません、シートを倒してもいいですか？" },
+            { id: 200, cat: "In-flight", en: "Excuse me, would you mind if I put my seat back?", ja: "すみません、座席を倒しても構いませんか？" },
+            { id: 201, cat: "In-flight", en: "May I have a blanket and a pillow?", ja: "毛布と枕をいただけますか？" },
+            { id: 202, cat: "In-flight", en: "May I have another blanket?", ja: "毛布をもう1枚いただけますか？" },
+            { id: 203, cat: "In-flight", en: "May I get another blanket?", ja: "もう1枚ブランケットをもらえますか？" },
+            { id: 204, cat: "In-flight", en: "May I have an extra blanket?", ja: "予備の毛布をいただけますか？" },
+            { id: 205, cat: "In-flight", en: "What is the local time now?", ja: "現地の今の時間は何時ですか？" },
+            { id: 206, cat: "In-flight", en: "Please fasten your seat belt.", ja: "シートベルトをお締めください。" },
+            { id: 207, cat: "In-flight", en: "Please return your seat back and table to their original positions.", ja: "座席とテーブルを元の位置にお戻しください。" },
+            { id: 208, cat: "In-flight", en: "We'll be landing soon.", ja: "まもなく着陸いたします。" },
+
+            // ==================== 4. ホテル (Hotel: 209~269) ====================
+            { id: 209, cat: "Hotel", en: "How may I help you today?", ja: "本日はどのようなご用件でしょうか？" },
+            { id: 210, cat: "Hotel", en: "Check in please.", ja: "チェックインをお願いします。" },
+            { id: 211, cat: "Hotel", en: "I'd like to check in please.", ja: "チェックインをお願いしたいのですが。" },
+            { id: 212, cat: "Hotel", en: "May I check in early?", ja: "アーリーチェックインは可能ですか？" },
+            { id: 213, cat: "Hotel", en: "May I have your passport please?", ja: "パスポートを拝見できますか？" },
+            { id: 214, cat: "Hotel", en: "Here you are.", ja: "はい、どうぞ。" },
+            { id: 215, cat: "Hotel", en: "I have a reservation.", ja: "予約しています。" },
+            { id: 216, cat: "Hotel", en: "Do you have a copy of your reservation?", ja: "予約の控えはお持ちですか？" },
+            { id: 217, cat: "Hotel", en: "What's the name of the reservation?", ja: "ご予約のお名前は何ですか？" },
+            { id: 218, cat: "Hotel", en: "What's your name?", ja: "お名前は何ですか？" },
+            { id: 219, cat: "Hotel", en: "Your name please.", ja: "お名前をお願いします。" },
+            { id: 220, cat: "Hotel", en: "May I have your name please?", ja: "お名前を伺えますか？" },
+            { id: 221, cat: "Hotel", en: "How do you spell that please?", ja: "スペルを教えていただけますか？" },
+            { id: 222, cat: "Hotel", en: "Just a moment please.", ja: "少々お待ちください。" },
+            { id: 223, cat: "Hotel", en: "Please fill out this registration card.", ja: "こちらの宿泊カードにご記入ください。" },
+            { id: 224, cat: "Hotel", en: "Would you like a room with twin beds or a double bed?", ja: "ツインのお部屋とダブルベッドのお部屋、どちらがよろしいですか？" },
+            { id: 225, cat: "Hotel", en: "You are staying for three nights, correct?", ja: "3泊のご滞在でお間違いないでしょうか？" },
+            { id: 226, cat: "Hotel", en: "How would you like to pay your deposit?", ja: "デポジットはどのようにお支払いになりますか？" },
+            { id: 227, cat: "Hotel", en: "How would you like to pay for incidentals?", ja: "追加料金等のお支払いはどうなさいますか？" },
+            { id: 228, cat: "Hotel", en: "Credit card please.", ja: "クレジットカードでお願いします。" },
+            { id: 229, cat: "Hotel", en: "Please sign here.", ja: "こちらにご署名をお願いします。" },
+            { id: 230, cat: "Hotel", en: "I'll return your passport.", ja: "パスポートをお返しします。" },
+            { id: 231, cat: "Hotel", en: "Here's your room key.", ja: "こちらがお部屋の鍵です。" },
+            { id: 232, cat: "Hotel", en: "Your room is on the fifth floor.", ja: "お部屋は5階になります。" },
+            { id: 233, cat: "Hotel", en: "Your room number is 510.", ja: "お部屋番号は510号室です。" },
+            { id: 234, cat: "Hotel", en: "You'll be staying in room 510 on the fifth floor.", ja: "5階の510号室にご滞在となります。" },
+            { id: 235, cat: "Hotel", en: "What time is check out?", ja: "チェックアウトは何時ですか？" },
+            { id: 236, cat: "Hotel", en: "What time should I check out by?", ja: "何時までにチェックアウトすればいいですか？" },
+            { id: 237, cat: "Hotel", en: "Is breakfast included?", ja: "朝食は含まれていますか？" },
+            { id: 238, cat: "Hotel", en: "Will there be additional charge?", ja: "追加料金は発生しますか？" },
+            { id: 239, cat: "Hotel", en: "Is there an additional charge?", ja: "追加料金はありますか？" },
+            { id: 240, cat: "Hotel", en: "Where can I have breakfast?", ja: "朝食はどこで食べられますか？" },
+            { id: 241, cat: "Hotel", en: "What time does breakfast open and close?", ja: "朝食は何時に始まり何時に終わりますか？" },
+            { id: 242, cat: "Hotel", en: "Is there Wi-Fi?", ja: "Wi-Fiはありますか？" },
+            { id: 243, cat: "Hotel", en: "Do you have free Wi-Fi here?", ja: "ここは無料Wi-Fiがありますか？" },
+            { id: 244, cat: "Hotel", en: "Do you have a password for the Wi-Fi?", ja: "Wi-Fiのパスワードはありますか？" },
+            { id: 245, cat: "Hotel", en: "Could you tell me the Wi-Fi password?", ja: "Wi-Fiのパスワードを教えていただけますか？" },
+            { id: 246, cat: "Hotel", en: "That's all done for you.", ja: "手続きはすべて完了いたしました。" },
+            { id: 247, cat: "Hotel", en: "Can I ask you something?", ja: "少しお尋ねしてもいいですか？" },
+            { id: 248, cat: "Hotel", en: "Is there a spa in the hotel?", ja: "ホテル内にスパはありますか？" },
+            { id: 249, cat: "Hotel", en: "I'd like to make a reservation for spa services.", ja: "スパの予約をしたいのですが。" },
+            { id: 250, cat: "Hotel", en: "Our hotel does not have a spa.", ja: "当ホテルにはスパはございません。" },
+            { id: 251, cat: "Hotel", en: "The light in the room doesn't work.", ja: "部屋の照明がつきません。" },
+            { id: 252, cat: "Hotel", en: "The air conditioner doesn't work.", ja: "エアコンが動きません。" },
+            { id: 253, cat: "Hotel", en: "There's no hot water.", ja: "お湯が出ません。" },
+            { id: 254, cat: "Hotel", en: "The shower doesn't work.", ja: "シャワーが使えません。" },
+            { id: 255, cat: "Hotel", en: "The toilet doesn't flush.", ja: "トイレの水が流れません。" },
+            { id: 256, cat: "Hotel", en: "Would you mind taking a look?", ja: "部屋を見ていただけますか？" },
+            { id: 257, cat: "Hotel", en: "The room hasn't been cleaned.", ja: "部屋が掃除されていません。" },
+            { id: 258, cat: "Hotel", en: "Please clean the room.", ja: "部屋の掃除をお願いします。" },
+            { id: 259, cat: "Hotel", en: "What are the hours for room service?", ja: "ルームサービスの営業時間は何時ですか？" },
+            { id: 260, cat: "Hotel", en: "I'd like to order room service.", ja: "ルームサービスを注文したいのですが。" },
+            { id: 261, cat: "Hotel", en: "I'd like to extend my stay for one more night.", ja: "もう1泊延泊したいのですが。" },
+            { id: 262, cat: "Hotel", en: "Do you know any good local restaurants around here?", ja: "この近くでおすすめの地元のレストランをご存知ですか？" },
+            { id: 263, cat: "Hotel", en: "Could you recommend a good restaurant?", ja: "おすすめのレストランを教えていただけますか？" },
+            { id: 264, cat: "Hotel", en: "Do you have anywhere you recommend around here?", ja: "この周辺でおすすめの場所はありますか？" },
+            { id: 265, cat: "Hotel", en: "Can I have a map please?", ja: "地図をいただけますか？" },
+            { id: 266, cat: "Hotel", en: "Could you show me on this map?", ja: "この地図上で教えていただけますか？" },
+            { id: 267, cat: "Hotel", en: "Thank you, I'll check it out.", ja: "ありがとうございます、行ってみます。" },
+            { id: 268, cat: "Hotel", en: "Could you call a taxi for me?", ja: "タクシーを呼んでいただけますか？" },
+            { id: 269, cat: "Hotel", en: "Please enjoy your stay.", ja: "どうぞご滞在をお楽しみください。" },
+
+            // ==================== 5. レストラン (Restaurant: 270~343) ====================
+            { id: 270, cat: "Restaurant", en: "Excuse me, are you still open?", ja: "すみません、まだ営業していますか？" },
+            { id: 271, cat: "Restaurant", en: "What kind of cuisine does this restaurant serve?", ja: "このお店はどんな料理を出していますか？" },
+            { id: 272, cat: "Restaurant", en: "What time do you open?", ja: "何時に開店しますか？" },
+            { id: 273, cat: "Restaurant", en: "Can I make a reservation now?", ja: "今予約をとることはできますか？" },
+            { id: 274, cat: "Restaurant", en: "I'd like to make a reservation.", ja: "予約をしたいのですが。" },
+            { id: 275, cat: "Restaurant", en: "Would you like a smoking or non-smoking table?", ja: "喫煙席と禁煙席のどちらがよろしいですか？" },
+            { id: 276, cat: "Restaurant", en: "Non-smoking please.", ja: "禁煙席でお願いします。" },
+            { id: 277, cat: "Restaurant", en: "Smoking please.", ja: "喫煙席でお願いします。" },
+            { id: 278, cat: "Restaurant", en: "How many people?", ja: "何名様ですか？" },
+            { id: 279, cat: "Restaurant", en: "It's only me.", ja: "私一人です。" },
+            { id: 280, cat: "Restaurant", en: "We are four people.", ja: "4人です。" },
+            { id: 281, cat: "Restaurant", en: "Do you have a table for four?", ja: "4人用のテーブルは空いていますか？" },
+            { id: 282, cat: "Restaurant", en: "I'd like a table for four please.", ja: "4人分の席をお願いします。" },
+            { id: 283, cat: "Restaurant", en: "I'd like a private room please.", ja: "個室をお願いしたいのですが。" },
+            { id: 284, cat: "Restaurant", en: "I have a reservation under Yamada.", ja: "ヤマダの名前で予約しています。" },
+            { id: 285, cat: "Restaurant", en: "I see you have a reservation for 6:00.", ja: "6時のご予約ですね。" },
+            { id: 286, cat: "Restaurant", en: "Let me show you to your table.", ja: "お席へご案内いたします。" },
+            { id: 287, cat: "Restaurant", en: "This way please.", ja: "こちらへどうぞ。" },
+            { id: 288, cat: "Restaurant", en: "Follow me please.", ja: "私についてきてください。" },
+            { id: 289, cat: "Restaurant", en: "Please come this way.", ja: "こちらへお越しください。" },
+            { id: 290, cat: "Restaurant", en: "Please be seated here.", ja: "こちらにお掛けください。" },
+            { id: 291, cat: "Restaurant", en: "Can I have the menu please?", ja: "メニューをいただけますか？" },
+            { id: 292, cat: "Restaurant", en: "Are you ready to order?", ja: "ご注文はお決まりですか？" },
+            { id: 293, cat: "Restaurant", en: "May I take your order?", ja: "ご注文をお伺いしてもよろしいですか？" },
+            { id: 294, cat: "Restaurant", en: "One moment please.", ja: "少々お待ちください。" },
+            { id: 295, cat: "Restaurant", en: "Could you take my order please?", ja: "注文を取っていただけますか？" },
+            { id: 296, cat: "Restaurant", en: "What would you like to order?", ja: "ご注文は何になさいますか？" },
+            { id: 297, cat: "Restaurant", en: "I'll have this one.", ja: "これをお願いします。" },
+            { id: 298, cat: "Restaurant", en: "Can I please have this?", ja: "これをいただけますか？" },
+            { id: 299, cat: "Restaurant", en: "What do you recommend?", ja: "おすすめは何ですか？" },
+            { id: 300, cat: "Restaurant", en: "I'd like the seafood pasta please.", ja: "シーフードパスタをお願いします。" },
+            { id: 301, cat: "Restaurant", en: "I'd like this steak and this salad.", ja: "このステーキとこのサラダをお願いします。" },
+            { id: 302, cat: "Restaurant", en: "How would you like your steak?", ja: "ステーキの焼き加減はいかがなさいますか？" },
+            { id: 303, cat: "Restaurant", en: "Medium rare please.", ja: "ミディアムレアでお願いします。" },
+            { id: 304, cat: "Restaurant", en: "Medium please.", ja: "ミディアムでお願いします。" },
+            { id: 305, cat: "Restaurant", en: "Same here.", ja: "私も同じものをお願いします。" },
+            { id: 306, cat: "Restaurant", en: "Would you like to share the salad?", ja: "サラダを取り分けますか？" },
+            { id: 307, cat: "Restaurant", en: "Yes please.", ja: "はい、お願いします。" },
+            { id: 308, cat: "Restaurant", en: "Would you like something to drink?", ja: "何かお飲み物はいかがですか？" },
+            { id: 309, cat: "Restaurant", en: "What can I get you to drink?", ja: "お飲み物は何をお持ちしましょうか？" },
+            { id: 310, cat: "Restaurant", en: "What would you like to drink?", ja: "何をお飲みになりたいですか？" },
+            { id: 311, cat: "Restaurant", en: "Can I have some water please?", ja: "お水をいただけますか？" },
+            { id: 312, cat: "Restaurant", en: "Do you have draft beer?", ja: "生ビールはありますか？" },
+            { id: 313, cat: "Restaurant", en: "What beer do you have on tap?", ja: "タップ（樽生）のビールは何がありますか？" },
+            { id: 314, cat: "Restaurant", en: "I'd like a draft beer please.", ja: "生ビールをお願いします。" },
+            { id: 315, cat: "Restaurant", en: "Can I have this red wine please?", ja: "この赤ワインをお願いします。" },
+            { id: 316, cat: "Restaurant", en: "How should I eat this dish?", ja: "この料理はどうやって食べればいいですか？" },
+            { id: 317, cat: "Restaurant", en: "Can I keep the menu please?", ja: "メニューをそのまま置いておいてもらえますか？" },
+            { id: 318, cat: "Restaurant", en: "I'll be right back with your order.", ja: "ご注文の品をすぐにお持ちいたします。" },
+            { id: 319, cat: "Restaurant", en: "May I use the restroom?", ja: "お手洗いをお借りできますか？" },
+            { id: 320, cat: "Restaurant", en: "Excuse me, where is the restroom?", ja: "すみません、お手洗いはどこですか？" },
+            { id: 321, cat: "Restaurant", en: "How was everything?", ja: "お食事はいかがでしたか？" },
+            { id: 322, cat: "Restaurant", en: "Did you enjoy it?", ja: "お楽しみいただけましたか？" },
+            { id: 323, cat: "Restaurant", en: "How did you like your meal?", ja: "お料理はお口に合いましたか？" },
+            { id: 324, cat: "Restaurant", en: "Everything was great, thank you.", ja: "すべてとても美味しかったです、ありがとう。" },
+            { id: 325, cat: "Restaurant", en: "It was very delicious, thank you.", ja: "とても美味しかったです、ありがとう。" },
+            { id: 326, cat: "Restaurant", en: "It was good, thank you.", ja: "美味しかったです、ありがとうございました。" },
+            { id: 327, cat: "Restaurant", en: "We really enjoyed our meal, thank you.", ja: "食事をとても楽しめました、ありがとうございました。" },
+            { id: 328, cat: "Restaurant", en: "Can I get the check please?", ja: "お会計をお願いできますか？" },
+            { id: 329, cat: "Restaurant", en: "May I have the check please?", ja: "伝票をいただけますか？" },
+            { id: 330, cat: "Restaurant", en: "Check please.", ja: "お会計をお願いします。" },
+            { id: 331, cat: "Restaurant", en: "Can we pay separately?", ja: "個別で支払うことはできますか？" },
+            { id: 332, cat: "Restaurant", en: "Can we have separate checks please?", ja: "別々にお会計をお願いできますか？" },
+            { id: 333, cat: "Restaurant", en: "Thank you for waiting.", ja: "お待たせいたしました。" },
+            { id: 334, cat: "Restaurant", en: "Here's your bill.", ja: "こちらがお会計伝票です。" },
+            { id: 335, cat: "Restaurant", en: "How much is the total?", ja: "合計でおいくらですか？" },
+            { id: 336, cat: "Restaurant", en: "We'd like to pay together.", ja: "まとめて支払いたいです。" },
+            { id: 337, cat: "Restaurant", en: "How would you like to pay?", ja: "お支払い方法はどのようになさいますか？" },
+            { id: 338, cat: "Restaurant", en: "I'd like to pay with cash.", ja: "現金で支払いたいです。" },
+            { id: 339, cat: "Restaurant", en: "I'd like to pay by credit card.", ja: "クレジットカードで支払いたいです。" },
+            { id: 340, cat: "Restaurant", en: "Can I have a receipt please?", ja: "領収書をいただけますか？" },
+            { id: 341, cat: "Restaurant", en: "What time do you close?", ja: "何時に閉店しますか？" },
+            { id: 342, cat: "Restaurant", en: "I'll be back.", ja: "また来ます。" },
+            { id: 343, cat: "Restaurant", en: "Thank you for coming.", ja: "ご来店ありがとうございました。" },
+
+            // ==================== 6. ショッピング (Shopping: 344~392) ====================
+            { id: 344, cat: "Shopping", en: "Hello, may I help you?", ja: "いらっしゃいませ、何かお探しですか？" },
+            { id: 345, cat: "Shopping", en: "Are you looking for something?", ja: "何か探していますか？" },
+            { id: 346, cat: "Shopping", en: "I'm just looking, thank you.", ja: "見ているだけです、ありがとうございます。" },
+            { id: 347, cat: "Shopping", en: "Can I try this on?", ja: "これを試着してもいいですか？" },
+            { id: 348, cat: "Shopping", en: "I'd like to try this on.", ja: "これを試着してみたいです。" },
+            { id: 349, cat: "Shopping", en: "Where can I try this on?", ja: "どこで試着できますか？" },
+            { id: 350, cat: "Shopping", en: "Could you tell me where the fitting room is?", ja: "試着室がどこにあるか教えていただけますか？" },
+            { id: 351, cat: "Shopping", en: "The fitting room is this way.", ja: "試着室はこちらになります。" },
+            { id: 352, cat: "Shopping", en: "Do you have size L?", ja: "Lサイズはありますか？" },
+            { id: 353, cat: "Shopping", en: "Do you have this in a large?", ja: "これのLサイズはありますか？" },
+            { id: 354, cat: "Shopping", en: "I'm sorry, but they are sold out.", ja: "申し訳ありませんが、売り切れです。" },
+            { id: 355, cat: "Shopping", en: "Could you order this item for me?", ja: "この商品を取り寄せていただけますか？" },
+            { id: 356, cat: "Shopping", en: "Do you have a larger one?", ja: "もっと大きいものはありますか？" },
+            { id: 357, cat: "Shopping", en: "Do you have this in a bigger size?", ja: "これの大きいサイズはありますか？" },
+            { id: 358, cat: "Shopping", en: "Do you have a smaller one?", ja: "もっと小さいものはありますか？" },
+            { id: 359, cat: "Shopping", en: "Do you have this in a smaller size?", ja: "これの小さいサイズはありますか？" },
+            { id: 360, cat: "Shopping", en: "Do you have this in a different color?", ja: "これの違う色はありますか？" },
+            { id: 361, cat: "Shopping", en: "Which color are you looking for?", ja: "何色をお探しですか？" },
+            { id: 362, cat: "Shopping", en: "Let me go check the stock.", ja: "在庫を確認してきます。" },
+            { id: 363, cat: "Shopping", en: "I'm sorry, we are out of stock.", ja: "申し訳ありません、在庫切れです。" },
+            { id: 364, cat: "Shopping", en: "How was it?", ja: "いかがでしたか？" },
+            { id: 365, cat: "Shopping", en: "Did you like it?", ja: "気に入りましたか？" },
+            { id: 366, cat: "Shopping", en: "Let me think about it, thank you.", ja: "少し考えます、ありがとうございます。" },
+            { id: 367, cat: "Shopping", en: "Is it possible to return this?", ja: "これを返品することは可能ですか？" },
+            { id: 368, cat: "Shopping", en: "Can I return this item?", ja: "この商品を返品できますか？" },
+            { id: 369, cat: "Shopping", en: "Do you have different colors?", ja: "他の色はありますか？" },
+            { id: 370, cat: "Shopping", en: "What is the most popular item?", ja: "一番人気の商品はどれですか？" },
+            { id: 371, cat: "Shopping", en: "How much is this?", ja: "おいくらですか？" },
+            { id: 372, cat: "Shopping", en: "Could you tell me how much this is?", ja: "これがいくらか教えていただけますか？" },
+            { id: 373, cat: "Shopping", en: "How much is it including tax?", ja: "税込でいくらですか？" },
+            { id: 374, cat: "Shopping", en: "I'll take this.", ja: "これを買います。" },
+            { id: 375, cat: "Shopping", en: "How would you like to pay?", ja: "お支払い方法は？" },
+            { id: 376, cat: "Shopping", en: "Cash or charge?", ja: "現金ですか、カードですか？" },
+            { id: 377, cat: "Shopping", en: "Can I use electronic payment?", ja: "電子決済は使えますか？" },
+            { id: 378, cat: "Shopping", en: "Can I pay by credit card?", ja: "クレジットカードで払えますか？" },
+            { id: 379, cat: "Shopping", en: "Do you accept credit cards?", ja: "クレジットカードは使えますか？" },
+            { id: 380, cat: "Shopping", en: "I'll pay in cash.", ja: "現金で払います。" },
+            { id: 381, cat: "Shopping", en: "Cash please.", ja: "現金でお願いします。" },
+            { id: 382, cat: "Shopping", en: "I'll pay by credit card.", ja: "クレジットカードで払います。" },
+            { id: 383, cat: "Shopping", en: "Can I get the receipt please?", ja: "レシートをいただけますか？" },
+            { id: 384, cat: "Shopping", en: "You gave me the wrong change.", ja: "お釣りが間違っています。" },
+            { id: 385, cat: "Shopping", en: "May I get an extra bag?", ja: "袋をもう1枚もらえますか？" },
+            { id: 386, cat: "Shopping", en: "Where is the duty free shop?", ja: "免税店はどこですか？" },
+            { id: 387, cat: "Shopping", en: "Excuse me, do you work here?", ja: "すみません、こちらの店員さんですか？" },
+            { id: 388, cat: "Shopping", en: "I'd like to return it.", ja: "返品したいのですが。" },
+            { id: 389, cat: "Shopping", en: "May I exchange it?", ja: "交換していただけますか？" },
+            { id: 390, cat: "Shopping", en: "How can I get a refund?", ja: "返金はどうすれば受けられますか？" },
+            { id: 391, cat: "Shopping", en: "Do you have the receipt?", ja: "レシートはお持ちですか？" },
+            { id: 392, cat: "Shopping", en: "Yes, I have the receipt.", ja: "はい、レシートを持っています。" },
+
+            // ==================== 7. 交通・道案内 (Directions: 393~442) ====================
+            { id: 393, cat: "Directions", en: "Excuse me, may I ask you something?", ja: "すみません、ちょっとお尋ねしてもいいですか？" },
+            { id: 394, cat: "Directions", en: "How can I get to this address?", ja: "この住所へはどう行けばいいですか？" },
+            { id: 395, cat: "Directions", en: "I'm looking for the train station near here.", ja: "この近くの駅を探しています。" },
+            { id: 396, cat: "Directions", en: "Excuse me, do you know where the station is?", ja: "すみません、駅がどこにあるかご存知ですか？" },
+            { id: 397, cat: "Directions", en: "Could you tell me how to get to the station?", ja: "駅への行き方を教えていただけますか？" },
+            { id: 398, cat: "Directions", en: "How can I get to the nearest station?", ja: "最寄り駅にはどう行けばいいですか？" },
+            { id: 399, cat: "Directions", en: "Where is the ticket gate?", ja: "改札口はどこですか？" },
+            { id: 400, cat: "Directions", en: "Where would you like to go?", ja: "どちらまで行かれますか？" },
+            { id: 401, cat: "Directions", en: "I'd like to go to Bangkok.", ja: "バンコクに行きたいです。" },
+            { id: 402, cat: "Directions", en: "You can take the bus.", ja: "バスに乗るといいですよ。" },
+            { id: 403, cat: "Directions", en: "Do I need a ticket for the bus?", ja: "バスの切符は必要ですか？" },
+            { id: 404, cat: "Directions", en: "Where can I buy the bus ticket?", ja: "バスのチケットはどこで買えますか？" },
+            { id: 405, cat: "Directions", en: "How much is the fare to Bangkok?", ja: "バンコクまでの運賃はいくらですか？" },
+            { id: 406, cat: "Directions", en: "Does this bus go to Bangkok?", ja: "このバスはバンコクに行きますか？" },
+            { id: 407, cat: "Directions", en: "How long does it take to get to Bangkok?", ja: "バンコクまでどれくらい時間がかかりますか？" },
+            { id: 408, cat: "Directions", en: "Is this bus bound for Bangkok?", ja: "このバスはバンコク行きですか？" },
+            { id: 409, cat: "Directions", en: "Where should I get off to get to Bangkok?", ja: "バンコクに行くにはどこで降りればいいですか？" },
+            { id: 410, cat: "Directions", en: "Where is the bus stop near here?", ja: "この近くのバス停はどこですか？" },
+            { id: 411, cat: "Directions", en: "You're waiting at the right bus stop.", ja: "ここで合っていますよ（正しいバス停です）。" },
+            { id: 412, cat: "Directions", en: "What time does this bus leave?", ja: "このバスは何時に発車しますか？" },
+            { id: 413, cat: "Directions", en: "I'd like to get off at the next bus stop.", ja: "次のバス停で降りたいです。" },
+            { id: 414, cat: "Directions", en: "Excuse me, I'm getting off.", ja: "すみません、降ります。" },
+            { id: 415, cat: "Directions", en: "I'd like to go to the Shangri-La Hotel.", ja: "シャングリラホテルへ行きたいです。" },
+            { id: 416, cat: "Directions", en: "How can I get to the Shangri-La Hotel?", ja: "シャングリラホテルへはどう行けばいいですか？" },
+            { id: 417, cat: "Directions", en: "Could you tell me how to get to the Shangri-La Hotel?", ja: "シャングリラホテルへの行き方を教えていただけますか？" },
+            { id: 418, cat: "Directions", en: "Is it far?", ja: "遠いですか？" },
+            { id: 419, cat: "Directions", en: "It's not that far.", ja: "それほど遠くありません。" },
+            { id: 420, cat: "Directions", en: "Can I hail a taxi here?", ja: "ここでタクシーを拾えますか？" },
+            { id: 421, cat: "Directions", en: "There is a taxi stand at the station.", ja: "駅にタクシー乗り場があります。" },
+            { id: 422, cat: "Directions", en: "Could you take me to the Shangri-La Hotel please?", ja: "シャングリラホテルまで連れて行っていただけますか？" },
+            { id: 423, cat: "Directions", en: "May I get in?", ja: "乗ってもいいですか？" },
+            { id: 424, cat: "Directions", en: "Sure, please get in.", ja: "もちろんです、お乗りください。" },
+            { id: 425, cat: "Directions", en: "Please go straight.", ja: "まっすぐ行ってください。" },
+            { id: 426, cat: "Directions", en: "Please turn right.", ja: "右に曲がってください。" },
+            { id: 427, cat: "Directions", en: "Please turn left.", ja: "左に曲がってください。" },
+            { id: 428, cat: "Directions", en: "Please turn right at the restaurant.", ja: "レストランのところで右に曲がってください。" },
+            { id: 429, cat: "Directions", en: "Is it this way?", ja: "こちらですか？" },
+            { id: 430, cat: "Directions", en: "I'm not really familiar with this area.", ja: "この辺りにはあまり詳しくありません。" },
+            { id: 431, cat: "Directions", en: "This traffic is terrible isn't it?", ja: "ひどい渋滞ですね。" },
+            { id: 432, cat: "Directions", en: "Is it too far to walk?", ja: "歩くには遠すぎますか？" },
+            { id: 433, cat: "Directions", en: "It's very near here.", ja: "ここからとても近いです。" },
+            { id: 434, cat: "Directions", en: "It's faster to walk.", ja: "歩いた方が早いです。" },
+            { id: 435, cat: "Directions", en: "Please drop me off here.", ja: "ここで降ろしてください。" },
+            { id: 436, cat: "Directions", en: "Please stop here.", ja: "ここで止めてください。" },
+            { id: 437, cat: "Directions", en: "I'm lost.", ja: "道に迷いました。" },
+            { id: 438, cat: "Directions", en: "Which way should I go?", ja: "どちらへ行けばいいですか？" },
+            { id: 439, cat: "Directions", en: "Do you need help?", ja: "手伝いが必要ですか？" },
+            { id: 440, cat: "Directions", en: "I'll show you the way.", ja: "道をご案内します。" },
+            { id: 441, cat: "Directions", en: "Please follow me.", ja: "私についてきてください。" },
+            { id: 442, cat: "Directions", en: "What's the name of this street?", ja: "この通りの名前は何ですか？" },
+
+            // ==================== 8. スパ・マッサージ (Spa: 443~468) ====================
+            { id: 443, cat: "Spa", en: "Excuse me, when is the massage open?", ja: "すみません、マッサージは何時に営業していますか？" },
+            { id: 444, cat: "Spa", en: "Can I make a reservation please?", ja: "予約できますか？" },
+            { id: 445, cat: "Spa", en: "I'd like to make a reservation for 6 p.m.", ja: "午後6時に予約をしたいのですが。" },
+            { id: 446, cat: "Spa", en: "Is it available?", ja: "空いていますか？" },
+            { id: 447, cat: "Spa", en: "Is it possible to get a massage now?", ja: "今マッサージを受けることは可能ですか？" },
+            { id: 448, cat: "Spa", en: "Which service do you recommend?", ja: "どのコース・サービスがおすすめですか？" },
+            { id: 449, cat: "Spa", en: "Can I see the menu please?", ja: "メニューを見せていただけますか？" },
+            { id: 450, cat: "Spa", en: "What kinds of courses do you have?", ja: "どのようなコースがありますか？" },
+            { id: 451, cat: "Spa", en: "Is the tip included?", ja: "チップは含まれていますか？" },
+            { id: 452, cat: "Spa", en: "May I come in?", ja: "入ってもよろしいですか？" },
+            { id: 453, cat: "Spa", en: "What parts of your body are stiff?", ja: "体のどの部分が凝っていますか？" },
+            { id: 454, cat: "Spa", en: "I'd like to have a full body massage.", ja: "全身マッサージを受けたいです。" },
+            { id: 455, cat: "Spa", en: "I have a stiff shoulder.", ja: "肩が凝っています。" },
+            { id: 456, cat: "Spa", en: "Could you please concentrate on my neck and shoulder areas?", ja: "首と肩のあたりを重点的に揉んでもらえますか？" },
+            { id: 457, cat: "Spa", en: "I'd like to make a reservation for a foot massage.", ja: "フットマッサージの予約をしたいです。" },
+            { id: 458, cat: "Spa", en: "Would you like it harder or softer?", ja: "強めと弱め、どちらが良いですか？" },
+            { id: 459, cat: "Spa", en: "A little softer please.", ja: "もう少し弱くお願いします。" },
+            { id: 460, cat: "Spa", en: "A little stronger please.", ja: "もう少し強くお願いします。" },
+            { id: 461, cat: "Spa", en: "It's a little too soft.", ja: "少し弱すぎます。" },
+            { id: 462, cat: "Spa", en: "It's a little too strong.", ja: "少し強すぎます。" },
+            { id: 463, cat: "Spa", en: "Is it too hard?", ja: "強すぎますか？" },
+            { id: 464, cat: "Spa", en: "It hurts a little.", ja: "少し痛いです。" },
+            { id: 465, cat: "Spa", en: "How's the pressure?", ja: "力加減はいかがですか？" },
+            { id: 466, cat: "Spa", en: "Please let me know if you feel uncomfortable.", ja: "痛かったり不快な点があれば教えてください。" },
+            { id: 467, cat: "Spa", en: "It's just right.", ja: "ちょうどいい強さです。" },
+            { id: 468, cat: "Spa", en: "I had a great time here, thank you.", ja: "とても良い時間を過ごせました、ありがとうございました。" },
+
+            // ==================== 9. チェックアウト・トラブル・会話 (Hotel & Trouble: 469~580) ====================
+            { id: 469, cat: "Hotel", en: "I'd like to check out.", ja: "チェックアウトしたいのですが。" },
+            { id: 470, cat: "Hotel", en: "Could you please return your room key?", ja: "ルームキーをご返却いただけますか？" },
+            { id: 471, cat: "Hotel", en: "Did you have anything from the mini bar?", ja: "ミニバーのご利用はありましたか？" },
+            { id: 472, cat: "Hotel", en: "Did you use the mini bar?", ja: "ミニバーを使いましたか？" },
+            { id: 473, cat: "Hotel", en: "I didn't use the mini bar.", ja: "ミニバーは使っていません。" },
+            { id: 474, cat: "Hotel", en: "Yes, I used the mini bar.", ja: "はい、ミニバーを使いました。" },
+            { id: 475, cat: "Hotel", en: "Here's your bill.", ja: "こちらが伝票です。" },
+            { id: 476, cat: "Hotel", en: "Please check your bill.", ja: "明細をご確認ください。" },
+            { id: 477, cat: "Hotel", en: "What is this charge for?", ja: "この請求は何のためのものですか？" },
+            { id: 478, cat: "Hotel", en: "How much is the total?", ja: "合計でおいくらですか？" },
+            { id: 479, cat: "Hotel", en: "Is everything included?", ja: "すべて含まれていますか？" },
+            { id: 480, cat: "Hotel", en: "How would you like to pay?", ja: "お支払い方法はどのようになさいますか？" },
+            { id: 481, cat: "Hotel", en: "Do you pay by credit card?", ja: "クレジットカードで支払いますか？" },
+            { id: 482, cat: "Hotel", en: "I'd like to pay in cash.", ja: "現金で払いたいです。" },
+            { id: 483, cat: "Hotel", en: "I'd like to pay by credit card please.", ja: "クレジットカードで払いたいです。" },
+            { id: 484, cat: "Hotel", en: "Could you keep our baggage until we get back?", ja: "戻るまで荷物を預かっていただけますか？" },
+            { id: 485, cat: "Hotel", en: "Would you keep my baggage?", ja: "荷物を預かっていただけますか？" },
+            { id: 486, cat: "Hotel", en: "Sure, here's your ticket.", ja: "もちろん、こちらが預かり証です。" },
+            { id: 487, cat: "Hotel", en: "We'll hold on to them for you.", ja: "お預かりいたします。" },
+            { id: 488, cat: "Hotel", en: "I'd like to pick up my baggage.", ja: "荷物を受け取りたいのですが。" },
+            { id: 489, cat: "Hotel", en: "I'd like to get to the airport at 8 a.m.", ja: "午前8時に空港に着きたいです。" },
+            { id: 490, cat: "Hotel", en: "Could you call a taxi for me?", ja: "タクシーを呼んでいただけますか？" },
+            { id: 491, cat: "Hotel", en: "Could you please call a taxi?", ja: "タクシーを呼んでいただけますか？" },
+            { id: 492, cat: "Hotel", en: "Sure, where to?", ja: "かしこまりました、どちらまでですか？" },
+            { id: 493, cat: "Hotel", en: "To the airport please.", ja: "空港までお願いします。" },
+            { id: 494, cat: "Hotel", en: "I'd like to go to the airport.", ja: "空港へ行きたいです。" },
+            { id: 495, cat: "Hotel", en: "What time is your return flight?", ja: "帰りの飛行機は何時ですか？" },
+            { id: 496, cat: "Hotel", en: "Flight time is at 11 a.m.", ja: "フライト時間は午前11時です。" },
+            { id: 497, cat: "Hotel", en: "How long does it take to get from here to the airport?", ja: "ここから空港までどれくらい時間がかかりますか？" },
+            { id: 498, cat: "Hotel", en: "It takes about an hour.", ja: "約1時間かかります。" },
+            { id: 499, cat: "Hotel", en: "Did you enjoy staying at this hotel?", ja: "当ホテルでのご滞在は楽しめましたか？" },
+            { id: 500, cat: "Hotel", en: "I enjoyed my stay, thank you.", ja: "快適な滞在でした、ありがとうございました。" },
+            { id: 501, cat: "Hotel", en: "Thank you for staying with us.", ja: "ご宿泊ありがとうございました。" },
+            { id: 502, cat: "Hotel", en: "We look forward to seeing you again.", ja: "またのお越しを心よりお待ちしております。" },
+            { id: 503, cat: "Trouble", en: "I'm in trouble now.", ja: "今困ったことになっています。" },
+            { id: 504, cat: "Trouble", en: "I've lost my passport.", ja: "パスポートを紛失してしまいました。" },
+            { id: 505, cat: "Trouble", en: "My smartphone has been stolen.", ja: "スマートフォンが盗まれました。" },
+            { id: 506, cat: "Trouble", en: "Where can I pick up my baggage?", ja: "手荷物はどこで受け取れますか？" },
+            { id: 507, cat: "Trouble", en: "My baggage didn't come out.", ja: "自分の荷物が出てきません。" },
+            { id: 508, cat: "Trouble", en: "My baggage hasn't come out.", ja: "手荷物がまだ出てきていません。" },
+            { id: 509, cat: "Trouble", en: "What happened to my luggage?", ja: "私の荷物はどうなりましたか？" },
+            { id: 510, cat: "Trouble", en: "Could you check where my luggage is?", ja: "私の荷物がどこにあるか確認していただけますか？" },
+            { id: 511, cat: "Trouble", en: "Do you have anything to declare?", ja: "申告するものはありますか？" },
+            { id: 512, cat: "Trouble", en: "What's in your suitcase?", ja: "スーツケースの中身は何ですか？" },
+            { id: 513, cat: "Trouble", en: "Just my personal items.", ja: "身の回り品だけです。" },
+            { id: 514, cat: "Trouble", en: "What is this?", ja: "これは何ですか？" },
+            { id: 515, cat: "Trouble", en: "This is a souvenir for my family.", ja: "家族へのお土産です。" },
+            { id: 516, cat: "Trouble", en: "It's a gift for my friend.", ja: "友達へのプレゼントです。" },
+            { id: 517, cat: "Trouble", en: "Where can I get a SIM card?", ja: "SIMカードはどこで購入できますか？" },
+            { id: 518, cat: "Trouble", en: "I'd like to buy a SIM card.", ja: "SIMカードを買いたいです。" },
+            { id: 519, cat: "Trouble", en: "How much data do you want to use?", ja: "データ容量はどれくらい使いたいですか？" },
+            { id: 520, cat: "Trouble", en: "Can I charge my smartphone here?", ja: "ここでスマホを充電できますか？" },
+            { id: 521, cat: "Trouble", en: "Excuse me, where is the currency exchange counter?", ja: "すみません、両替所はどこですか？" },
+            { id: 522, cat: "Trouble", en: "Where can I exchange money?", ja: "どこで両替できますか？" },
+            { id: 523, cat: "Trouble", en: "I'd like to exchange Yen for dollars.", ja: "日本円をドルに両替したいのですが。" },
+            { id: 524, cat: "Trouble", en: "Yen to dollars please.", ja: "円からドルへ両替をお願いします。" },
+            { id: 525, cat: "Trouble", en: "I'd like to exchange my money into dollars.", ja: "お金をドルに両替したいです。" },
+            { id: 526, cat: "Trouble", en: "How much would you like to exchange?", ja: "いくら両替したいですか？" },
+            { id: 527, cat: "Trouble", en: "I'd like to exchange 80,000 yen for dollars.", ja: "8万円分をドルに両替したいです。" },
+            { id: 528, cat: "Trouble", en: "Could you give me 20s?", ja: "20ドル札でいただけますか？" },
+            { id: 529, cat: "Trouble", en: "Could you please check it again?", ja: "もう一度確認していただけますか？" },
+            { id: 530, cat: "Trouble", en: "Could you speak more slowly please?", ja: "もう少しゆっくり話していただけますか？" },
+            { id: 531, cat: "Trouble", en: "Sorry, could you say that one more time slowly?", ja: "すみません、もう一度ゆっくり言っていただけますか？" },
+            { id: 532, cat: "Trouble", en: "Sorry, I couldn't hear you.", ja: "すみません、聞き取れませんでした。" },
+            { id: 533, cat: "Trouble", en: "Wait a moment please.", ja: "少々お待ちください。" },
+            { id: 534, cat: "Trouble", en: "I don't know.", ja: "わかりません。" },
+            { id: 535, cat: "Trouble", en: "Do you speak Japanese?", ja: "日本語は話せますか？" },
+            { id: 536, cat: "Trouble", en: "I'm not good at English.", ja: "英語が得意ではありません。" },
+            { id: 537, cat: "Trouble", en: "What do you think?", ja: "どう思いますか？" },
+            { id: 538, cat: "Trouble", en: "After you.", ja: "お先にどうぞ。" },
+            { id: 539, cat: "Trouble", en: "May I take a picture here?", ja: "ここで写真を撮ってもいいですか？" },
+            { id: 540, cat: "Trouble", en: "Could you take a photo for me?", ja: "写真を撮っていただけますか？" },
+            { id: 541, cat: "Trouble", en: "Could you take a photo of us please?", ja: "私たちの写真を撮っていただけますか？" },
+            { id: 542, cat: "Trouble", en: "May I shoot a video here for YouTube?", ja: "YouTube用にここで動画撮影してもいいですか？" },
+            { id: 543, cat: "Trouble", en: "Where can I get some beers?", ja: "ビールはどこで買えますか？" },
+            { id: 544, cat: "Trouble", en: "Can I sit next to you?", ja: "隣に座ってもいいですか？" },
+            { id: 545, cat: "Trouble", en: "Where are you from?", ja: "どちらのご出身ですか？" },
+            { id: 546, cat: "Trouble", en: "Would you like to have a drink with me?", ja: "一緒に一杯飲みませんか？" },
+            { id: 547, cat: "Trouble", en: "Would you like to drink with me?", ja: "一緒に飲みませんか？" },
+            { id: 548, cat: "Trouble", en: "Are you having fun?", ja: "楽しんでいますか？" },
+            { id: 549, cat: "Trouble", en: "Are you on Instagram?", ja: "Instagramはやっていますか？" },
+            { id: 550, cat: "Trouble", en: "Are you on Facebook?", ja: "Facebookはやっていますか？" },
+            { id: 551, cat: "Trouble", en: "Are you online?", ja: "オンラインですか？" },
+            { id: 552, cat: "Trouble", en: "Let's exchange LINE.", ja: "LINEを交換しましょう。" },
+            { id: 553, cat: "Trouble", en: "Let's chat online.", ja: "オンラインでチャットしましょう。" },
+            { id: 554, cat: "Trouble", en: "Can I have your LINE ID?", ja: "LINEのIDを教えてもらえますか？" },
+            { id: 555, cat: "Trouble", en: "Let's exchange contacts.", ja: "連絡先を交換しましょう。" },
+            { id: 556, cat: "Trouble", en: "Let's keep in touch.", ja: "連絡を取り合いましょう。" },
+            { id: 557, cat: "Trouble", en: "I had a great time.", ja: "とても楽しかったです。" },
+            { id: 558, cat: "Trouble", en: "I had a great time talking with you.", ja: "あなたとお話しできてとても楽しかったです。" },
+            { id: 559, cat: "Trouble", en: "I want to be friends with you.", ja: "あなたと友達になりたいです。" },
+            { id: 560, cat: "Trouble", en: "When can I see you again?", ja: "次はいつ会えますか？" },
+            { id: 561, cat: "Trouble", en: "I want to be with you forever.", ja: "ずっとあなたと一緒にいたいです。" },
+            { id: 562, cat: "Trouble", en: "Have a nice day.", ja: "良い一日を。" },
+            { id: 563, cat: "Trouble", en: "Have a good trip.", ja: "良い旅を。" },
+            { id: 564, cat: "Trouble", en: "Take care.", ja: "気をつけてね。" },
+            { id: 565, cat: "Trouble", en: "Nice meeting you.", ja: "お会いできて良かったです。" },
+            { id: 566, cat: "Trouble", en: "See you later.", ja: "また後でね。" },
+            { id: 567, cat: "Trouble", en: "Keep in touch.", ja: "連絡を取り合おうね。" },
+            { id: 568, cat: "Trouble", en: "Call me anytime.", ja: "いつでも電話してね。" },
+            { id: 569, cat: "Trouble", en: "Text me when you get home.", ja: "家に着いたらメッセージを送ってね。" },
+            { id: 570, cat: "Trouble", en: "What's your phone number?", ja: "電話番号は何番ですか？" },
+            { id: 571, cat: "Trouble", en: "Can I have your email address?", ja: "メールアドレスを教えてもらえますか？" },
+            { id: 572, cat: "Trouble", en: "What do you like to do in your free time?", ja: "休みの日は何をするのが好きですか？" },
+            { id: 573, cat: "Trouble", en: "What kind of music do you like?", ja: "どんな音楽が好きですか？" },
+            { id: 574, cat: "Trouble", en: "What is your favorite food?", ja: "好きな食べ物は何ですか？" },
+            { id: 575, cat: "Trouble", en: "Do you like traveling?", ja: "旅行は好きですか？" },
+            { id: 576, cat: "Trouble", en: "How long have you lived here?", ja: "ここに住んでどれくらいになりますか？" },
+            { id: 577, cat: "Trouble", en: "Thank you so much for your help.", ja: "助けてくれて本当にありがとうございました。" },
+            { id: 578, cat: "Trouble", en: "I really appreciate it.", ja: "心から感謝いたします。" },
+            { id: 579, cat: "Trouble", en: "You've been very helpful.", ja: "大変助かりました。" },
+            { id: 580, cat: "Trouble", en: "Have a safe flight back home.", ja: "無事におうちに帰ってくださいね。" }
+        ];
+
+        /* Categories list */
+        const CATEGORIES = [
+            { id: "ALL", label: "すべて" },
+            { id: "FAV", label: "★ お気に入り" },
+            { id: "Immigration", label: "入国審査" },
+            { id: "Airport", label: "空港" },
+            { id: "In-flight", label: "機内" },
+            { id: "Hotel", label: "ホテル" },
+            { id: "Restaurant", label: "レストラン" },
+            { id: "Shopping", label: "買い物" },
+            { id: "Directions", label: "交通・道案内" },
+            { id: "Spa", label: "スパ" },
+            { id: "Trouble", label: "トラブル・会話" }
+        ];
+
+        /* App State */
+        let currentTab = "card"; // card, quiz, list
+        let currentCategory = "ALL";
+        let filteredPhrases = [...MASTER_PHRASES];
+        let cardIndex = 0;
+        let isCardFlipped = false;
+        let hideEnglishAlways = false;
+        let speechRate = 1.0;
+        let isDarkMode = false;
+        
+        // LocalStorage persisted
+        let bookmarks = JSON.parse(localStorage.getItem("phrase_bookmarks") || "[]");
+        let phraseStatus = JSON.parse(localStorage.getItem("phrase_status") || "{}"); // { id: 'mastered'|'review' }
+
+        // Quiz State
+        let quizScore = 0;
+        let quizTotal = 0;
+        let currentQuizPhrase = null;
+
+        /* Initialization */
+        window.addEventListener("DOMContentLoaded", () => {
+            initTheme();
+            renderCategoryBar();
+            applyCategoryFilter("ALL");
+            lucide.createIcons();
+            
+            // Warm up TTS engine
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+        });
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem("phrase_app_theme");
+            if (savedTheme === "dark" || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setDarkMode(true);
+            } else {
+                setDarkMode(false);
+            }
+        }
+
+        function toggleDarkMode() {
+            setDarkMode(!isDarkMode);
+        }
+
+        function setDarkMode(dark) {
+            isDarkMode = dark;
+            const darkIcon = document.getElementById("theme-toggle-dark-icon");
+            const lightIcon = document.getElementById("theme-toggle-light-icon");
+
+            if (isDarkMode) {
+                document.documentElement.classList.add("dark");
+                localStorage.setItem("phrase_app_theme", "dark");
+                if (darkIcon) darkIcon.classList.add("hidden");
+                if (lightIcon) lightIcon.classList.remove("hidden");
+            } else {
+                document.documentElement.classList.remove("dark");
+                localStorage.setItem("phrase_app_theme", "light");
+                if (darkIcon) darkIcon.classList.remove("hidden");
+                if (lightIcon) lightIcon.classList.add("hidden");
+            }
+        }
+
+        function renderCategoryBar() {
+            const container = document.getElementById("category-bar");
+            container.innerHTML = CATEGORIES.map(cat => `
+                <button onclick="applyCategoryFilter('${cat.id}')" id="cat-btn-${cat.id}" class="px-3 py-1.5 rounded-full font-medium whitespace-nowrap transition border ${cat.id === currentCategory ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-600'}">
+                    ${cat.label}
+                </button>
+            `).join("");
+        }
+
+        function applyCategoryFilter(catId) {
+            currentCategory = catId;
+            renderCategoryBar();
+
+            if (catId === "ALL") {
+                filteredPhrases = [...MASTER_PHRASES];
+            } else if (catId === "FAV") {
+                filteredPhrases = MASTER_PHRASES.filter(p => bookmarks.includes(p.id));
+            } else {
+                filteredPhrases = MASTER_PHRASES.filter(p => p.cat === catId);
+            }
+
+            cardIndex = 0;
+            isCardFlipped = false;
+
+            if (currentTab === "card") updateFlashcard();
+            if (currentTab === "quiz") setupQuizQuestion();
+            if (currentTab === "list") renderList();
+        }
+
+        function updateFlashcard() {
+            const cardCounter = document.getElementById("card-counter");
+            const cardCategory = document.getElementById("card-category");
+            const cardJa = document.getElementById("card-ja");
+            const cardEnContainer = document.getElementById("card-en-container");
+            const cardEn = document.getElementById("card-en");
+            const bookmarkBtn = document.getElementById("card-bookmark-btn");
+
+            if (filteredPhrases.length === 0) {
+                cardCounter.innerText = "0 / 0";
+                cardCategory.innerText = "データなし";
+                cardJa.innerText = "該当するフレーズがありません。";
+                cardEnContainer.classList.add("hidden");
+                return;
+            }
+
+            cardEnContainer.classList.remove("hidden");
+            cardCounter.innerText = `${cardIndex + 1} / ${filteredPhrases.length}`;
+
+            const item = filteredPhrases[cardIndex];
+            
+            // Category Label
+            const catObj = CATEGORIES.find(c => c.id === item.cat);
+            cardCategory.innerText = catObj ? catObj.label : item.cat;
+
+            // Japanese text
+            cardJa.innerText = item.ja;
+
+            // Bookmark icon state
+            const isBookmarked = bookmarks.includes(item.id);
+            bookmarkBtn.innerHTML = `<i data-lucide="star" class="w-6 h-6 ${isBookmarked ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300 dark:text-slate-600'}"></i>`;
+            lucide.createIcons();
+
+            // English reveal state
+            if (hideEnglishAlways && !isCardFlipped) {
+                cardEn.innerText = "タップして英語フレーズを表示";
+                cardEn.className = "text-sm text-slate-400 dark:text-slate-500 italic";
+            } else {
+                cardEn.innerText = item.en;
+                cardEn.className = "text-lg sm:text-xl font-semibold text-indigo-600 dark:text-indigo-400 tracking-wide";
+            }
+        }
+
+        function flipCard() {
+            isCardFlipped = !isCardFlipped;
+            updateFlashcard();
+            
+            // If flipped to reveal English, speak it automatically
+            if (isCardFlipped && filteredPhrases.length > 0) {
+                speakText(filteredPhrases[cardIndex].en);
+            }
+        }
+
+        function nextCard() {
+            if (filteredPhrases.length === 0) return;
+            cardIndex = (cardIndex + 1) % filteredPhrases.length;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function prevCard() {
+            if (filteredPhrases.length === 0) return;
+            cardIndex = (cardIndex - 1 + filteredPhrases.length) % filteredPhrases.length;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function shufflePhrases() {
+            for (let i = filteredPhrases.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredPhrases[i], filteredPhrases[j]] = [filteredPhrases[j], filteredPhrases[i]];
+            }
+            cardIndex = 0;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function toggleHideEnglish() {
+            hideEnglishAlways = document.getElementById("toggle-hide-english").checked;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function playCurrentAudio() {
+            if (filteredPhrases.length > 0) {
+                speakText(filteredPhrases[cardIndex].en);
+            }
+        }
+
+        function toggleBookmarkCurrent() {
+            if (filteredPhrases.length === 0) return;
+            const item = filteredPhrases[cardIndex];
+            if (bookmarks.includes(item.id)) {
+                bookmarks = bookmarks.filter(id => id !== item.id);
+            } else {
+                bookmarks.push(item.id);
+            }
+            localStorage.setItem("phrase_bookmarks", JSON.stringify(bookmarks));
+            updateFlashcard();
+        }
+
+        function markStatus(status) {
+            if (filteredPhrases.length === 0) return;
+            const item = filteredPhrases[cardIndex];
+            phraseStatus[item.id] = status;
+            localStorage.setItem("phrase_status", JSON.stringify(phraseStatus));
+            nextCard();
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel(); // Stop ongoing audio
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "en-US";
+            utterance.rate = speechRate;
+
+            // Try selecting US/English voice if available
+            const voices = window.speechSynthesis.getVoices();
+            const englishVoice = voices.find(v => v.lang.startsWith("en"));
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function setSpeed(rate) {
+            speechRate = rate;
+            document.querySelectorAll("[id^='speed-']").forEach(btn => {
+                btn.className = "px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium";
+            });
+            if (rate === 1.0) document.getElementById("speed-10").className = "px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium";
+            if (rate === 0.8) document.getElementById("speed-08").className = "px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium";
+            if (rate === 0.6) document.getElementById("speed-06").className = "px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium";
+        }
+
+        function setupQuizQuestion() {
+            if (filteredPhrases.length < 4) {
+                document.getElementById("quiz-question-ja").innerText = "クイズを開始するにはカテゴリーを「すべて」にするか、フレーズを増やす必要があります（最低4件）。";
+                document.getElementById("quiz-options").innerHTML = "";
+                return;
+            }
+
+            const feedback = document.getElementById("quiz-feedback");
+            const nextBtn = document.getElementById("quiz-next-btn");
+            feedback.classList.add("hidden");
+            nextBtn.classList.add("hidden");
+
+            // Pick 1 target question
+            const randomIndex = Math.floor(Math.random() * filteredPhrases.length);
+            currentQuizPhrase = filteredPhrases[randomIndex];
+
+            document.getElementById("quiz-question-ja").innerText = currentQuizPhrase.ja;
+            
+            const catObj = CATEGORIES.find(c => c.id === currentQuizPhrase.cat);
+            document.getElementById("quiz-category").innerText = catObj ? catObj.label : currentQuizPhrase.cat;
+
+            // Create 3 distractors
+            let distractors = MASTER_PHRASES.filter(p => p.id !== currentQuizPhrase.id);
+            distractors.sort(() => 0.5 - Math.random());
+            let choices = [currentQuizPhrase, ...distractors.slice(0, 3)];
+            choices.sort(() => 0.5 - Math.random());
+
+            const optionsContainer = document.getElementById("quiz-options");
+            optionsContainer.innerHTML = choices.map(choice => `
+                <button onclick="checkQuizAnswer(${choice.id === currentQuizPhrase.id}, this, '${choice.en.replace(/'/g, "\\'")}')" class="quiz-opt-btn w-full p-4 border border-slate-200 dark:border-slate-700 rounded-xl text-left hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 transition font-medium text-slate-700 dark:text-slate-200 text-sm sm:text-base flex justify-between items-center bg-white dark:bg-slate-800">
+                    <span>${choice.en}</span>
+                    <i data-lucide="volume-2" class="w-4 h-4 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400" onclick="event.stopPropagation(); speakText('${choice.en.replace(/'/g, "\\'")}')"></i>
+                </button>
+            `).join("");
+
+            lucide.createIcons();
+        }
+
+        function checkQuizAnswer(isCorrect, element, englishText) {
+            speakText(englishText);
+
+            // Disable all options
+            const allOpts = document.querySelectorAll(".quiz-opt-btn");
+            allOpts.forEach(btn => btn.disabled = true);
+
+            quizTotal++;
+            const feedback = document.getElementById("quiz-feedback");
+            const nextBtn = document.getElementById("quiz-next-btn");
+
+            if (isCorrect) {
+                quizScore++;
+                element.classList.add("bg-emerald-100", "dark:bg-emerald-950/80", "border-emerald-500", "text-emerald-800", "dark:text-emerald-200");
+                feedback.innerText = "正解です！ Great job!";
+                feedback.className = "p-4 rounded-xl text-center font-bold text-sm bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 block";
+            } else {
+                element.classList.add("bg-rose-100", "dark:bg-rose-950/80", "border-rose-500", "text-rose-800", "dark:text-rose-200");
+                feedback.innerText = `不正解です。正解: ${currentQuizPhrase.en}`;
+                feedback.className = "p-4 rounded-xl text-center font-bold text-sm bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 block";
+            }
+
+            document.getElementById("quiz-score").innerText = `Score: ${quizScore} / ${quizTotal}`;
+            nextBtn.classList.remove("hidden");
+        }
+
+        function nextQuizQuestion() {
+            setupQuizQuestion();
+        }
+
+        function renderList() {
+            const query = document.getElementById("search-input").value.toLowerCase().trim();
+            const container = document.getElementById("phrase-list");
+
+            let list = filteredPhrases;
+            if (query) {
+                list = list.filter(p => p.en.toLowerCase().includes(query) || p.ja.includes(query));
+            }
+
+            document.getElementById("list-count").innerText = `該当 ${list.length} 件`;
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 dark:text-slate-500">フレーズが見つかりませんでした</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(item => {
+                const isBookmarked = bookmarks.includes(item.id);
+                return `
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-start space-x-3 hover:border-indigo-200 dark:hover:border-indigo-600 transition">
+                        <div class="space-y-1 flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded">
+                                    ${item.cat}
+                                </span>
+                            </div>
+                            <div class="font-bold text-slate-800 dark:text-slate-100 text-base">${item.ja}</div>
+                            <div class="text-indigo-600 dark:text-indigo-400 font-medium text-sm flex items-center space-x-2">
+                                <span>${item.en}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-1 pt-1">
+                            <button onclick="speakText('${item.en.replace(/'/g, "\\'")}')" class="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition" title="音声再生">
+                                <i data-lucide="volume-2" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="toggleBookmarkInList(${item.id})" class="p-2 text-slate-300 dark:text-slate-600 hover:text-yellow-500 transition">
+                                <i data-lucide="star" class="w-5 h-5 ${isBookmarked ? 'fill-yellow-400 text-yellow-400' : ''}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            lucide.createIcons();
+        }
+
+        function toggleBookmarkInList(id) {
+            if (bookmarks.includes(id)) {
+                bookmarks = bookmarks.filter(bId => bId !== id);
+            } else {
+                bookmarks.push(id);
+            }
+            localStorage.setItem("phrase_bookmarks", JSON.stringify(bookmarks));
+            if (currentCategory === "FAV") applyCategoryFilter("FAV");
+            else renderList();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Tab button styles
+            ["card", "quiz", "list"].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                const view = document.getElementById(`view-${t}`);
+                if (t === tab) {
+                    btn.className = "px-3 py-1.5 rounded-lg flex items-center space-x-1 transition font-medium bg-white text-indigo-700 shadow-sm";
+                    view.classList.remove("hidden");
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg flex items-center space-x-1 transition font-medium text-white hover:bg-indigo-600/50 dark:hover:bg-slate-700/50";
+                    view.classList.add("hidden");
+                }
+            });
+
+            if (tab === "card") updateFlashcard();
+            if (tab === "quiz") setupQuizQuestion();
+            if (tab === "list") renderList();
+        }
+    </script>
+</body>
+</html>
